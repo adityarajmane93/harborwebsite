@@ -1,61 +1,112 @@
 <?php
 /**
- * The template for displaying archive pages
+ * The template for displaying Archive page.
  *
- * @link https://codex.wordpress.org/Template_Hierarchy
- *
- * @package WordPress
- * @subpackage Twenty_Seventeen
- * @since 1.0
- * @version 1.0
+ * @package ThemeGrill
+ * @subpackage ColorMag
+ * @since ColorMag 1.0
  */
 
 get_header(); ?>
 
-<div class="wrap">
+	<?php do_action( 'colormag_before_body_content' ); ?>
 
-	<?php if ( have_posts() ) : ?>
-		<header class="page-header">
-			<?php
-				the_archive_title( '<h1 class="page-title">', '</h1>' );
-				the_archive_description( '<div class="taxonomy-description">', '</div>' );
-			?>
-		</header><!-- .page-header -->
-	<?php endif; ?>
+	<div id="primary">
+		<div id="content" class="clearfix">
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
+			<?php if ( have_posts() ) : ?>
 
-		<?php
-		if ( have_posts() ) : ?>
-			<?php
-			/* Start the Loop */
-			while ( have_posts() ) : the_post();
+				<header class="page-header">
+               <?php if ( is_category() ) {
+                  do_action('colormag_category_title');
+                  single_cat_title();
+                  } else { ?>
+					<h1 class="page-title">
+               <span>
+						<?php
+							if ( is_tag() ) :
+								single_tag_title();
 
-				/*
-				 * Include the Post-Format-specific template for the content.
-				 * If you want to override this in a child theme, then include a file
-				 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
-				 */
-				get_template_part( 'template-parts/post/content', get_post_format() );
+							elseif ( is_author() ) :
+								/* Queue the first post, that way we know
+								 * what author we're dealing with (if that is the case).
+								*/
+								the_post();
+								printf( __( 'Author: %s', 'colormag' ), '<span class="vcard">' . get_the_author() . '</span>' );
+								/* Since we called the_post() above, we need to
+								 * rewind the loop back to the beginning that way
+								 * we can run the loop properly, in full.
+								 */
+								rewind_posts();
 
-			endwhile;
+							elseif ( is_day() ) :
+								printf( __( 'Day: %s', 'colormag' ), '<span>' . get_the_date() . '</span>' );
 
-			the_posts_pagination( array(
-				'prev_text' => twentyseventeen_get_svg( array( 'icon' => 'arrow-left' ) ) . '<span class="screen-reader-text">' . __( 'Previous page', 'twentyseventeen' ) . '</span>',
-				'next_text' => '<span class="screen-reader-text">' . __( 'Next page', 'twentyseventeen' ) . '</span>' . twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ),
-				'before_page_number' => '<span class="meta-nav screen-reader-text">' . __( 'Page', 'twentyseventeen' ) . ' </span>',
-			) );
+							elseif ( is_month() ) :
+								printf( __( 'Month: %s', 'colormag' ), '<span>' . get_the_date( 'F Y' ) . '</span>' );
 
-		else :
+							elseif ( is_year() ) :
+								printf( __( 'Year: %s', 'colormag' ), '<span>' . get_the_date( 'Y' ) . '</span>' );
 
-			get_template_part( 'template-parts/post/content', 'none' );
+							elseif ( is_tax( 'post_format', 'post-format-aside' ) ) :
+								_e( 'Asides', 'colormag' );
 
-		endif; ?>
+							elseif ( is_tax( 'post_format', 'post-format-image' ) ) :
+								_e( 'Images', 'colormag');
 
-		</main><!-- #main -->
+							elseif ( is_tax( 'post_format', 'post-format-video' ) ) :
+								_e( 'Videos', 'colormag' );
+
+							elseif ( is_tax( 'post_format', 'post-format-quote' ) ) :
+								_e( 'Quotes', 'colormag' );
+
+							elseif ( is_tax( 'post_format', 'post-format-link' ) ) :
+								_e( 'Links', 'colormag' );
+
+							elseif ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) :
+									woocommerce_page_title( false );
+
+							else :
+								_e( 'Archives', 'colormag' );
+
+							endif;
+						?>
+					</span></h1>
+                  <?php } ?>
+					<?php
+						// Show an optional term description.
+						$term_description = term_description();
+						if ( ! empty( $term_description ) ) :
+							printf( '<div class="taxonomy-description">%s</div>', $term_description );
+						endif;
+					?>
+				</header><!-- .page-header -->
+
+            <div class="article-container">
+
+   				<?php global $post_i; $post_i = 1; ?>
+
+   				<?php while ( have_posts() ) : the_post(); ?>
+
+   					<?php get_template_part( 'content', 'archive' ); ?>
+
+   				<?php endwhile; ?>
+
+            </div>
+
+				<?php get_template_part( 'navigation', 'archive' ); ?>
+
+			<?php else : ?>
+
+				<?php get_template_part( 'no-results', 'archive' ); ?>
+
+			<?php endif; ?>
+
+		</div><!-- #content -->
 	</div><!-- #primary -->
-	<?php get_sidebar(); ?>
-</div><!-- .wrap -->
 
-<?php get_footer();
+	<?php colormag_sidebar_select(); ?>
+
+	<?php do_action( 'colormag_after_body_content' ); ?>
+
+<?php get_footer(); ?>

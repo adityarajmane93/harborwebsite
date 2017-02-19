@@ -1,43 +1,52 @@
 <?php
 /**
- * The template for displaying all single posts
+ * Theme Single Post Section for our theme.
  *
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/#single-post
- *
- * @package WordPress
- * @subpackage Twenty_Seventeen
- * @since 1.0
- * @version 1.0
+ * @package ThemeGrill
+ * @subpackage ColorMag
+ * @since ColorMag 1.0
  */
-
 get_header(); ?>
 
-<div class="wrap">
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
+	<?php do_action( 'colormag_before_body_content' ); ?>
 
-			<?php
-				/* Start the Loop */
-				while ( have_posts() ) : the_post();
+	<div id="primary">
+		<div id="content" class="clearfix">
 
-					get_template_part( 'template-parts/post/content', get_post_format() );
+			<?php while ( have_posts() ) : the_post(); ?>
 
-					// If comments are open or we have at least one comment, load up the comment template.
-					if ( comments_open() || get_comments_number() ) :
-						comments_template();
-					endif;
+				<?php get_template_part( 'content', 'single' ); ?>
 
-					the_post_navigation( array(
-						'prev_text' => '<span class="screen-reader-text">' . __( 'Previous Post', 'twentyseventeen' ) . '</span><span aria-hidden="true" class="nav-subtitle">' . __( 'Previous', 'twentyseventeen' ) . '</span> <span class="nav-title"><span class="nav-title-icon-wrapper">' . twentyseventeen_get_svg( array( 'icon' => 'arrow-left' ) ) . '</span>%title</span>',
-						'next_text' => '<span class="screen-reader-text">' . __( 'Next Post', 'twentyseventeen' ) . '</span><span aria-hidden="true" class="nav-subtitle">' . __( 'Next', 'twentyseventeen' ) . '</span> <span class="nav-title">%title<span class="nav-title-icon-wrapper">' . twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ) . '</span></span>',
-					) );
+			<?php endwhile; ?>
 
-				endwhile; // End of the loop.
-			?>
+		</div><!-- #content -->
 
-		</main><!-- #main -->
+      <?php get_template_part( 'navigation', 'single' ); ?>
+
+      <?php if ( get_the_author_meta( 'description' ) ) : ?>
+         <div class="author-box">
+            <div class="author-img"><?php echo get_avatar( get_the_author_meta( 'user_email' ), '100' ); ?></div>
+               <h4 class="author-name"><?php the_author_meta( 'display_name' ); ?></h4>
+               <p class="author-description"><?php the_author_meta( 'description' ); ?></p>
+         </div>
+      <?php endif; ?>
+
+      <?php if ( get_theme_mod( 'colormag_related_posts_activate', 0 ) == 1 )
+         get_template_part( 'inc/related-posts' );
+      ?>
+
+      <?php
+         do_action( 'colormag_before_comments_template' );
+         // If comments are open or we have at least one comment, load up the comment template
+         if ( comments_open() || '0' != get_comments_number() )
+            comments_template();
+         do_action ( 'colormag_after_comments_template' );
+      ?>
+
 	</div><!-- #primary -->
-	<?php get_sidebar(); ?>
-</div><!-- .wrap -->
 
-<?php get_footer();
+	<?php colormag_sidebar_select(); ?>
+
+	<?php do_action( 'colormag_after_body_content' ); ?>
+
+<?php get_footer(); ?>

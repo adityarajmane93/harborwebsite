@@ -1,47 +1,42 @@
 <?php
 /**
- * The template for displaying the footer
+ * Theme Footer Section for our theme.
  *
- * Contains the closing of the #content div and all content after.
+ * Displays all of the footer section and closing of the #main div.
  *
- * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
- *
- * @package WordPress
- * @subpackage Twenty_Seventeen
- * @since 1.0
- * @version 1.0
+ * @package ThemeGrill
+ * @subpackage ColorMag
+ * @since ColorMag 1.0
  */
-
 ?>
 
-		</div><!-- #content -->
-
-		<footer id="colophon" class="site-footer" role="contentinfo">
-			<div class="wrap">
-				<?php
-				get_template_part( 'template-parts/footer/footer', 'widgets' );
-
-				if ( has_nav_menu( 'social' ) ) : ?>
-					<nav class="social-navigation" role="navigation" aria-label="<?php _e( 'Footer Social Links Menu', 'twentyseventeen' ); ?>">
-						<?php
-							wp_nav_menu( array(
-								'theme_location' => 'social',
-								'menu_class'     => 'social-links-menu',
-								'depth'          => 1,
-								'link_before'    => '<span class="screen-reader-text">',
-								'link_after'     => '</span>' . twentyseventeen_get_svg( array( 'icon' => 'chain' ) ),
-							) );
-						?>
-					</nav><!-- .social-navigation -->
-				<?php endif;
-
-				get_template_part( 'template-parts/footer/site', 'info' );
-				?>
-			</div><!-- .wrap -->
-		</footer><!-- #colophon -->
-	</div><!-- .site-content-contain -->
-</div><!-- #page -->
-<?php wp_footer(); ?>
-
+		</div><!-- .inner-wrap -->
+	</div><!-- #main -->
+   <?php if ( is_active_sidebar('colormag_advertisement_above_the_footer_sidebar') ) { ?>
+      <div class="advertisement_above_footer">
+         <div class="inner-wrap">
+            <?php dynamic_sidebar('colormag_advertisement_above_the_footer_sidebar'); ?>
+         </div>
+      </div>
+   <?php } ?>
+	<?php do_action( 'colormag_before_footer' ); ?>
+		<footer id="colophon" class="clearfix">
+			<?php get_sidebar( 'footer' ); ?>
+			<div class="footer-socket-wrapper clearfix">
+				<div class="inner-wrap">
+					<div class="footer-socket-area">
+                  <div class="footer-socket-right-section">
+   						<?php if( get_theme_mod( 'colormag_social_link_activate', 0 ) == 1 ) { colormag_social_links(); } ?>
+                  </div>
+                  <div class="footer-socket-left-sectoin">
+   						<?php do_action( 'colormag_footer_copyright' ); ?>
+                  </div>
+					</div>
+				</div>
+			</div>
+		</footer>
+		<a href="#masthead" id="scroll-up"><i class="fa fa-chevron-up"></i></a>
+	</div><!-- #page -->
+	<?php wp_footer(); ?>
 </body>
 </html>

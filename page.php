@@ -1,41 +1,36 @@
 <?php
 /**
- * The template for displaying all pages
+ * Theme Page Section for our theme.
  *
- * This is the template that displays all pages by default.
- * Please note that this is the WordPress construct of pages
- * and that other 'pages' on your WordPress site may use a
- * different template.
- *
- * @link https://codex.wordpress.org/Template_Hierarchy
- *
- * @package WordPress
- * @subpackage Twenty_Seventeen
- * @since 1.0
- * @version 1.0
+ * @package ThemeGrill
+ * @subpackage ColorMag
+ * @since ColorMag 1.0
  */
-
 get_header(); ?>
 
-<div class="wrap">
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
+	<?php do_action( 'colormag_before_body_content' ); ?>
 
-			<?php
-			while ( have_posts() ) : the_post();
+	<div id="primary">
+		<div id="content" class="clearfix">
+			<?php while ( have_posts() ) : the_post(); ?>
 
-				get_template_part( 'template-parts/page/content', 'page' );
+				<?php get_template_part( 'content', 'page' ); ?>
 
-				// If comments are open or we have at least one comment, load up the comment template.
-				if ( comments_open() || get_comments_number() ) :
-					comments_template();
-				endif;
+				<?php
+					do_action( 'colormag_before_comments_template' );
+					// If comments are open or we have at least one comment, load up the comment template
+					if ( comments_open() || '0' != get_comments_number() )
+						comments_template();
+	      		do_action ( 'colormag_after_comments_template' );
+				?>
 
-			endwhile; // End of the loop.
-			?>
+			<?php endwhile; ?>
 
-		</main><!-- #main -->
+		</div><!-- #content -->
 	</div><!-- #primary -->
-</div><!-- .wrap -->
 
-<?php get_footer();
+	<?php colormag_sidebar_select(); ?>
+
+	<?php do_action( 'colormag_after_body_content' ); ?>
+
+<?php get_footer(); ?>
