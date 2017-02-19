@@ -1,15 +1,16 @@
 <?php
 /**
- * The template for displaying Comments.
+ * The template for displaying comments
  *
- * The area of the page that contains both current comments
- * and the comment form. The actual display of comments is
- * handled by a callback to colormag_comment() which is
- * located in the inc/functions.php file.
+ * This is the template that displays the area of the page that contains both the current comments
+ * and the comment form.
  *
- * @package ThemeGrill
- * @subpackage ColorMag
- * @since ColorMag 1.0
+ * @link https://codex.wordpress.org/Template_Hierarchy
+ *
+ * @package WordPress
+ * @subpackage Twenty_Seventeen
+ * @since 1.0
+ * @version 1.0
  */
 
 /*
@@ -17,56 +18,65 @@
  * the visitor has not yet entered the password we will
  * return early without loading the comments.
  */
-if ( post_password_required() )
+if ( post_password_required() ) {
 	return;
+}
 ?>
 
 <div id="comments" class="comments-area">
 
-	<?php // You can start editing here -- including this comment! ?>
-
-	<?php if ( have_comments() ) : ?>
-		<h3 class="comments-title">
+	<?php
+	// You can start editing here -- including this comment!
+	if ( have_comments() ) : ?>
+		<h2 class="comments-title">
 			<?php
-				printf( _nx( 'One thought on &ldquo;%2$s&rdquo;', '%1$s thoughts on &ldquo;%2$s&rdquo;', get_comments_number(), 'comments title', 'colormag' ),
-					number_format_i18n( get_comments_number() ), '<span>' . get_the_title() . '</span>' );
+				$comments_number = get_comments_number();
+				if ( '1' === $comments_number ) {
+					/* translators: %s: post title */
+					printf( _x( 'One Reply to &ldquo;%s&rdquo;', 'comments title', 'twentyseventeen' ), get_the_title() );
+				} else {
+					printf(
+						/* translators: 1: number of comments, 2: post title */
+						_nx(
+							'%1$s Reply to &ldquo;%2$s&rdquo;',
+							'%1$s Replies to &ldquo;%2$s&rdquo;',
+							$comments_number,
+							'comments title',
+							'twentyseventeen'
+						),
+						number_format_i18n( $comments_number ),
+						get_the_title()
+					);
+				}
 			?>
-		</h3>
+		</h2>
 
-		<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // are there comments to navigate through ?>
-		<nav id="comment-nav-above" class="comment-navigation clearfix" role="navigation">
-			<h3 class="screen-reader-text"><?php _e( 'Comment navigation', 'colormag' ); ?></h3>
-			<div class="nav-previous"><?php previous_comments_link( __( '&larr; Older Comments', 'colormag' ) ); ?></div>
-			<div class="nav-next"><?php next_comments_link( __( 'Newer Comments &rarr;', 'colormag' ) ); ?></div>
-		</nav><!-- #comment-nav-above -->
-		<?php endif; // check for comment navigation ?>
-
-		<ul class="comment-list">
+		<ol class="comment-list">
 			<?php
 				wp_list_comments( array(
-					'callback'    => 'colormag_comment',
-					'short_ping'  => true
+					'avatar_size' => 100,
+					'style'       => 'ol',
+					'short_ping'  => true,
+					'reply_text'  => twentyseventeen_get_svg( array( 'icon' => 'mail-reply' ) ) . __( 'Reply', 'twentyseventeen' ),
 				) );
 			?>
-		</ul><!-- .comment-list -->
+		</ol>
 
-		<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // are there comments to navigate through ?>
-		<nav id="comment-nav-below" class="comment-navigation clearfix" role="navigation">
-			<h3 class="screen-reader-text"><?php _e( 'Comment navigation', 'colormag' ); ?></h3>
-			<div class="nav-previous"><?php previous_comments_link( __( '&larr; Older Comments', 'colormag' ) ); ?></div>
-			<div class="nav-next"><?php next_comments_link( __( 'Newer Comments &rarr;', 'colormag' ) ); ?></div>
-		</nav><!-- #comment-nav-below -->
-		<?php endif; // check for comment navigation ?>
+		<?php the_comments_pagination( array(
+			'prev_text' => twentyseventeen_get_svg( array( 'icon' => 'arrow-left' ) ) . '<span class="screen-reader-text">' . __( 'Previous', 'twentyseventeen' ) . '</span>',
+			'next_text' => '<span class="screen-reader-text">' . __( 'Next', 'twentyseventeen' ) . '</span>' . twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ),
+		) );
 
-	<?php endif; // have_comments() ?>
+	endif; // Check for have_comments().
 
+	// If comments are closed and there are comments, let's leave a little note, shall we?
+	if ( ! comments_open() && get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) : ?>
+
+		<p class="no-comments"><?php _e( 'Comments are closed.', 'twentyseventeen' ); ?></p>
 	<?php
-		// If comments are closed and there are comments, let's leave a little note, shall we?
-		if ( ! comments_open() && '0' != get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) :
-	?>
-		<p class="no-comments"><?php _e( 'Comments are closed.', 'colormag' ); ?></p>
-	<?php endif; ?>
+	endif;
 
-	<?php comment_form(); ?>
+	comment_form();
+	?>
 
 </div><!-- #comments -->

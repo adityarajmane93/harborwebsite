@@ -1,36 +1,34 @@
 <?php
 /**
- * The template for displaying 404 pages (Page Not Found).
+ * The template for displaying 404 pages (not found)
  *
- * @package ThemeGrill
- * @subpackage ColorMag
- * @since ColorMag 1.0
+ * @link https://codex.wordpress.org/Creating_an_Error_404_Page
+ *
+ * @package WordPress
+ * @subpackage Twenty_Seventeen
+ * @since 1.0
+ * @version 1.0
  */
 
 get_header(); ?>
 
-	<?php do_action( 'colormag_before_body_content' ); ?>
+<div class="wrap">
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
 
-	<div id="primary">
-		<div id="content" class="clearfix">
 			<section class="error-404 not-found">
+				<header class="page-header">
+					<h1 class="page-title"><?php _e( 'Oops! That page can&rsquo;t be found.', 'twentyseventeen' ); ?></h1>
+				</header><!-- .page-header -->
 				<div class="page-content">
+					<p><?php _e( 'It looks like nothing was found at this location. Maybe try a search?', 'twentyseventeen' ); ?></p>
 
-					<?php if ( ! dynamic_sidebar( 'colormag_error_404_page_sidebar' ) ) : ?>
-						<header class="page-header">
-							<h1 class="page-title"><?php _e( 'Oops! That page can&rsquo;t be found.', 'colormag' ); ?></h1>
-						</header>
-						<p><?php _e( 'It looks like nothing was found at this location. Try the search below.', 'colormag' ); ?></p>
-						<?php get_search_form(); ?>
-					<?php endif; ?>
+					<?php get_search_form(); ?>
 
 				</div><!-- .page-content -->
 			</section><!-- .error-404 -->
-		</div><!-- #content -->
+		</main><!-- #main -->
 	</div><!-- #primary -->
+</div><!-- .wrap -->
 
-	<?php colormag_sidebar_select(); ?>
-
-	<?php do_action( 'colormag_after_body_content' ); ?>
-
-<?php get_footer(); ?>
+<?php get_footer();

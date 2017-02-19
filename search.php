@@ -1,48 +1,62 @@
 <?php
 /**
- * The template for displaying Search Results pages.
+ * The template for displaying search results pages
  *
- * @package ThemeGrill
- * @subpackage ColorMag
- * @since ColorMag 1.0
+ * @link https://developer.wordpress.org/themes/basics/template-hierarchy/#search-result
+ *
+ * @package WordPress
+ * @subpackage Twenty_Seventeen
+ * @since 1.0
+ * @version 1.0
  */
+
 get_header(); ?>
 
-	<?php do_action( 'colormag_before_body_content' ); ?>
+<div class="wrap">
 
-	<div id="primary">
-		<div id="content" class="clearfix">
-			<?php if ( have_posts() ) : ?>
+	<header class="page-header">
+		<?php if ( have_posts() ) : ?>
+			<h1 class="page-title"><?php printf( __( 'Search Results for: %s', 'twentyseventeen' ), '<span>' . get_search_query() . '</span>' ); ?></h1>
+		<?php else : ?>
+			<h1 class="page-title"><?php _e( 'Nothing Found', 'twentyseventeen' ); ?></h1>
+		<?php endif; ?>
+	</header><!-- .page-header -->
 
-            <header class="page-header">
-               <h1 class="page-title"><?php printf( esc_html__( 'Search Results for: %s', 'colormag' ), get_search_query() ); ?></h1>
-            </header><!-- .page-header -->
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
 
-				<div class="article-container">
+		<?php
+		if ( have_posts() ) :
+			/* Start the Loop */
+			while ( have_posts() ) : the_post();
 
-               <?php global $post_i; $post_i = 1; ?>
+				/**
+				 * Run the loop for the search to output the results.
+				 * If you want to overload this in a child theme then include a file
+				 * called content-search.php and that will be used instead.
+				 */
+				get_template_part( 'template-parts/post/content', 'excerpt' );
 
-               <?php while ( have_posts() ) : the_post(); ?>
+			endwhile; // End of the loop.
 
-                  <?php get_template_part( 'content', 'archive' ); ?>
+			the_posts_pagination( array(
+				'prev_text' => twentyseventeen_get_svg( array( 'icon' => 'arrow-left' ) ) . '<span class="screen-reader-text">' . __( 'Previous page', 'twentyseventeen' ) . '</span>',
+				'next_text' => '<span class="screen-reader-text">' . __( 'Next page', 'twentyseventeen' ) . '</span>' . twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ),
+				'before_page_number' => '<span class="meta-nav screen-reader-text">' . __( 'Page', 'twentyseventeen' ) . ' </span>',
+			) );
 
-               <?php endwhile; ?>
+		else : ?>
 
-            </div>
+			<p><?php _e( 'Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'twentyseventeen' ); ?></p>
+			<?php
+				get_search_form();
 
-            <?php get_template_part( 'navigation', 'archive' ); ?>
+		endif;
+		?>
 
-         <?php else : ?>
-
-            <?php get_template_part( 'no-results', 'archive' ); ?>
-
-         <?php endif; ?>
-
-		</div><!-- #content -->
+		</main><!-- #main -->
 	</div><!-- #primary -->
+	<?php get_sidebar(); ?>
+</div><!-- .wrap -->
 
-	<?php colormag_sidebar_select(); ?>
-
-	<?php do_action( 'colormag_after_body_content' ); ?>
-
-<?php get_footer(); ?>
+<?php get_footer();

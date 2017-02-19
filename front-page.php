@@ -1,92 +1,54 @@
 <?php
 /**
- * Template to show the front page.
+ * The front page template file
  *
- * @package ThemeGrill
- * @subpackage ColorMag
- * @since ColorMag 1.0
+ * If the user has selected a static page for their homepage, this is what will
+ * appear.
+ * Learn more: https://codex.wordpress.org/Template_Hierarchy
+ *
+ * @package WordPress
+ * @subpackage Twenty_Seventeen
+ * @since 1.0
+ * @version 1.0
  */
+
 get_header(); ?>
 
-   <div class="front-page-top-section clearfix">
-      <div class="widget_slider_area">
-         <?php
-         if( is_active_sidebar( 'colormag_front_page_slider_area' ) ) {
-            if ( !dynamic_sidebar( 'colormag_front_page_slider_area' ) ):
-            endif;
-         }
-         ?>
-      </div>
+<div id="primary" class="content-area">
+	<main id="main" class="site-main" role="main">
 
-      <div class="widget_beside_slider">
-         <?php
-         if( is_active_sidebar( 'colormag_front_page_area_beside_slider' ) ) {
-            if ( !dynamic_sidebar( 'colormag_front_page_area_beside_slider' ) ):
-            endif;
-         }
-         ?>
-      </div>
-   </div>
-   <div class="main-content-section clearfix">
-      <div id="primary">
-         <div id="content" class="clearfix">
+		<?php // Show the selected frontpage content.
+		if ( have_posts() ) :
+			while ( have_posts() ) : the_post();
+				get_template_part( 'template-parts/page/content', 'front-page' );
+			endwhile;
+		else : // I'm not sure it's possible to have no posts when this page is shown, but WTH.
+			get_template_part( 'template-parts/post/content', 'none' );
+		endif; ?>
 
-         <?php
-         if( is_active_sidebar( 'colormag_front_page_content_top_section' ) ) {
-            if ( !dynamic_sidebar( 'colormag_front_page_content_top_section' ) ):
-            endif;
-         }
+		<?php
+		// Get each of our panels and show the post data.
+		if ( 0 !== twentyseventeen_panel_count() || is_customize_preview() ) : // If we have pages to show.
 
-         if( is_active_sidebar( 'colormag_front_page_content_middle_left_section' ) || is_active_sidebar( 'colormag_front_page_content_middle_right_section' )) {
-         ?>
-            <div class="tg-one-half">
-               <?php
-               if ( !dynamic_sidebar( 'colormag_front_page_content_middle_left_section' ) ):
-               endif;
-               ?>
-            </div>
-            <div class="tg-one-half tg-one-half-last">
-               <?php
-               if ( !dynamic_sidebar( 'colormag_front_page_content_middle_right_section' ) ):
-               endif;
-               ?>
-            </div>
-         <div class="clearfix"></div>
-         <?php
-         }
-         if( is_active_sidebar( 'colormag_front_page_content_bottom_section' ) ) {
-            if ( !dynamic_sidebar( 'colormag_front_page_content_bottom_section' ) ):
-            endif;
-         }
-         if (get_theme_mod('colormag_hide_blog_front', 0) == 0): ?>
+			/**
+			 * Filter number of front page sections in Twenty Seventeen.
+			 *
+			 * @since Twenty Seventeen 1.0
+			 *
+			 * @param $num_sections integer
+			 */
+			$num_sections = apply_filters( 'twentyseventeen_front_page_sections', 4 );
+			global $twentyseventeencounter;
 
-            <div class="article-container">
-               <?php if ( have_posts() ) : ?>
+			// Create a setting and control for each of the sections available in the theme.
+			for ( $i = 1; $i < ( 1 + $num_sections ); $i++ ) {
+				$twentyseventeencounter = $i;
+				twentyseventeen_front_page_section( null, $i );
+			}
 
-                  <?php while ( have_posts() ) : the_post(); ?>
+	endif; // The if ( 0 !== twentyseventeen_panel_count() ) ends here. ?>
 
-                     <?php
-                     if ( is_front_page() && is_home() ) {
-                       get_template_part( 'content', '' );
-                     } elseif ( is_front_page() ) {
-                       get_template_part( 'content', 'page' );
-                     }
-                     ?>
+	</main><!-- #main -->
+</div><!-- #primary -->
 
-                  <?php endwhile; ?>
-
-                  <?php get_template_part( 'navigation', 'none' ); ?>
-
-               <?php else : ?>
-
-                  <?php get_template_part( 'no-results', 'none' ); ?>
-
-               <?php endif; ?>
-            </div>
-         <?php endif; ?>
-         </div>
-      </div>
-      <?php colormag_sidebar_select(); ?>
-   </div>
-
-<?php get_footer(); ?>
+<?php get_footer();
